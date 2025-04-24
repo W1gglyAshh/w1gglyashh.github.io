@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday!</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+        font-family: "Poppins";
+        src: url("fonts/poppins-regular-webfont.woff2") format("woff2"),
+          url("fonts/poppins-regular-webfont.woff") format("woff");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Poppins";
+        src: url("fonts/Poppins-SemiBold.woff2") format("woff2"),
+          url("fonts/Poppins-SemiBold.woff") format("woff");
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Dancing Script";
+        src: url("fonts/DancingScript-Bold.woff2") format("woff2"),
+          url("fonts/DancingScript-Bold.woff") format("woff");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f9f0ff;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        text-align: center;
+      }
+
+      h1 {
+        font-family: "Dancing Script", cursive;
+        font-size: clamp(2.5rem, 5vw, 4.5rem); /* adjust dynamically */
+        color: #8a2be2;
+        margin-bottom: 40px;
+        text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+        animation: pulse 2s infinite;
+      }
+
+      .message-box {
+        background-color: #ffffff;
+        border-radius: 25px;
+        padding: 20px; /* reduce padding for smaller screens */
+        max-width: 100%; /* prevent overflow */
+        margin: 20px auto; /* adjust margin */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: default;
+        transition: transform 0.3s ease, cursor 0.3s ease;
+        position: relative;
+      }
+
+      .message-box.active {
+        cursor: pointer;
+      }
+
+      .message-box.active:hover {
+        transform: scale(1.02);
+      }
+
+      .message {
+        display: none;
+        font-size: clamp(1rem, 2.5vw, 1.5rem); /* responsive font size */
+        line-height: 1.5;
+        color: #444;
+        word-wrap: break-word; /* ensure long words wrap */
+        overflow-wrap: break-word;
+        max-width: 100%; /* prevent overflow */
+      }
+
+      .tips {
+        font-size: clamp(0.8rem, 2vw, 1rem);
+      }
+
+      .message.active {
+        display: block;
+        animation: fadeIn 1s;
+      }
+
+      .decorations {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .balloon {
+        position: absolute;
+        font-size: 2rem;
+        animation: float 15s infinite linear;
+        opacity: 0.7;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      .cake-container {
+        margin-top: 40px;
+        position: relative;
+        height: 200px;
+      }
+
+      .cake {
+        font-size: 8rem;
+        cursor: default;
+        position: relative;
+        display: inline-block;
+        transition: transform 0.3s ease, cursor 0.3s ease;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .cake.active {
+        cursor: pointer;
+        pointer-events: auto;
+        opacity: 1;
+      }
+
+      .countdown-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgb(137, 43, 226);
+        border-radius: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+      }
+
+      .countdown-overlay.hidden {
+        display: none;
+      }
+
+      .countdown-timer {
+        font-family: "Poppins", sans-serif;
+        font-size: clamp(2rem, 5vw, 4rem);
+        font-weight: 600;
+        color: white;
+        text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 15px;
+      }
+
+      .countdown-text {
+        font-size: clamp(1rem, 3vw, 1.5rem);
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(100vh) translateX(0) rotate(0deg);
+          opacity: 0.7;
+        }
+        10% {
+          opacity: 0.7;
+        }
+        90% {
+          opacity: 0.7;
+        }
+        100% {
+          transform: translateY(-100px) translateX(calc(100vw * var(--tx)))
+            rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes flicker {
+        0% {
+          opacity: 0.7;
+          transform: translateX(-50%) scaleY(0.9);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(-50%) scaleY(1.1);
+        }
+      }
+
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background-color: var(--color);
+        opacity: 1;
+        pointer-events: none;
+        top: 0;
+        z-index: 1000;
+      }
+
+      @keyframes confetti-fall {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(calc(100vh + 20px)) translateX(var(--drift))
+            rotate(360deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>TO MICHELLE</h1>
+      <h1>HAPPY BIRTHDAY</h1>
+
+      <div class="message-box" id="messageBox">
+        <div class="countdown-overlay" id="countdownOverlay">
+          <div class="countdown-timer" id="countdownTimer">00:00:00</div>
+          <div class="countdown-text">until Birthday Time!</div>
+        </div>
+
+        <div class="message active">
+          <div class="message active">
+            First of all - HAPPY BIRTHDAY 🥳! (It's always worth repeating on
+            your special day!) We've been through almost THREE YEARS together
+            🖖! This is hands down the LONGEST friendship I've ever had—and one
+            I know is worth keeping forever. 🤞
+            <div class="tips">(click for the next page 👉)</div>
+          </div>
+          <div class="message">
+            Like I've said before, this friendship means a LOT to me. You've
+            changed me. You gave me someone to talk to when everything felt
+            wrong, when I felt lost, or when I was just a total mess 🥺. You've
+            100% claimed a permanent spot on my BEST FRIEND list - the one I'll
+            never let more than 10 people be on in my entire life!
+            <div class="tips">(keep going... 👉)</div>
+          </div>
+          <div class="message">
+            Yep, we argue sometimes 😛... but it proved the solidness of us! We
+            share so many things in common - hobbies, interests... that's
+            definitely a reason of why we're so close. But the real reason is
+            deeper: we both VALUE this friendship. A lot. (honestly, you were
+            actually part of the reason I didn't leave NY back in grade 6) And
+            when we both moved away from Shanghai, it was tough adjusting. But
+            we held on to this bond, we supported each other—and we made it
+            through!!! 🤜🤛
+            <div class="tips">(just a bit more... 👉)</div>
+          </div>
+          <div class="message">
+            Surely, our relationship has just been repaired, and we are better
+            than EVER!!! But during the past 3 months, I felt the loneliness -
+            and I guess you too. Let's just make sure that it will never happen
+            again 🤣... and wish our friendship last FOREVER 🥳!!!
+            <div class="tips">(believe me, it's the last page! 👉)</div>
+          </div>
+          <div class="message">
+            HAPPY BIRRRRRRRRRTHDAY!!!!!!!!!! 🎉🎉🎉
+            <div class="tips">
+              (maybe u can try clicking somewhere else? 👇)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cake-container">
+        <div class="cake" id="cake">🎂</div>
+      </div>
+    </div>
+
+    <div class="decorations" id="decorations"></div>
+
+    <script>
+      // message rotation
+      const messageBox = document.getElementById("messageBox");
+      const messages = messageBox.querySelectorAll(".message > .message");
+      let currentMessageIndex = 0;
+      let interactionsEnabled = false;
+
+      messageBox.addEventListener("click", (e) => {
+        if (e.target.closest(".countdown-overlay") || !interactionsEnabled) {
+          return;
+        }
+
+        messages[currentMessageIndex].classList.remove("active");
+        currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+        messages[currentMessageIndex].classList.add("active");
+      });
+
+      // continuous balloons
+      const decorations = document.getElementById("decorations");
+      const balloonColors = ["🎈", "🎈", "🎈", "🎈", "🎈"];
+      const maxActiveBalloons = 15;
+
+      function createBalloon() {
+        if (document.querySelectorAll(".balloon").length >= maxActiveBalloons) {
+          return;
+        }
+
+        const balloon = document.createElement("div");
+        balloon.className = "balloon";
+        balloon.textContent =
+          balloonColors[Math.floor(Math.random() * balloonColors.length)];
+        balloon.style.setProperty("--tx", Math.random());
+        balloon.style.left = `${Math.random() * 100}%`;
+        balloon.style.animationDuration = `${10 + Math.random() * 15}s`;
+
+        balloon.addEventListener("click", () => {
+          balloon.style.fontSize = "3rem";
+          balloon.style.opacity = "1";
+          setTimeout(() => {
+            balloon.style.transform = "translateY(-100vh)";
+            balloon.style.transition = "transform 3s ease";
+          }, 200);
+        });
+
+        decorations.appendChild(balloon);
+
+        // remove balloon after animation completes
+        setTimeout(() => {
+          if (balloon.parentNode) {
+            balloon.parentNode.removeChild(balloon);
+          }
+        }, parseFloat(balloon.style.animationDuration) * 1000);
+      }
+
+      // initially create some balloons
+      for (let i = 0; i < maxActiveBalloons; i++) {
+        setTimeout(() => createBalloon(), i * 300);
+      }
+
+      // continuously create new balloons
+      setInterval(createBalloon, 1000);
+
+      // cake interaction
+      const cake = document.getElementById("cake");
+
+      cake.addEventListener("click", () => {
+        // only respond to clicks if interactions are enabled
+        if (!interactionsEnabled) return;
+
+        // apply a quick animation effect
+        cake.style.transform = "scale(1.1)";
+        setTimeout(() => {
+          cake.style.transform = "scale(1)";
+        }, 200);
+
+        // create confetti on every click
+        createConfetti();
+      });
+
+      // confetti effect
+      function createConfetti() {
+        const colors = [
+          "#ff0000",
+          "#00ff00",
+          "#0000ff",
+          "#ffff00",
+          "#ff00ff",
+          "#00ffff",
+          "#ff9900",
+          "#9900ff",
+          "#00ffcc",
+        ];
+        const confettiCount = 150;
+
+        for (let i = 0; i < confettiCount; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+
+          // random color
+          confetti.style.backgroundColor =
+            colors[Math.floor(Math.random() * colors.length)];
+
+          // random position across the entire width of the screen
+          confetti.style.left = `${Math.random() * 100}%`;
+
+          // random horizontal drift during falling
+          const drift = Math.random() * 200 - 100; // pixels of horizontal movement
+          confetti.style.setProperty("--drift", `${drift}px`);
+
+          // random size between 5px and 15px
+          const size = 5 + Math.random() * 10;
+          confetti.style.width = `${size}px`;
+          confetti.style.height = `${size}px`;
+
+          // confetti shapes
+          if (Math.random() > 0.5) {
+            confetti.style.borderRadius = "50%"; // circles
+          } else if (Math.random() > 0.5) {
+            confetti.style.transform = "rotate(45deg)"; // diamonds
+          }
+
+          // animation
+          confetti.style.animation = `confetti-fall ${
+            2 + Math.random() * 4
+          }s linear forwards`;
+
+          document.body.appendChild(confetti);
+
+          // remove after animation completes
+          setTimeout(() => {
+            if (confetti.parentNode) {
+              confetti.parentNode.removeChild(confetti);
+            }
+          }, 6000);
+        }
+      }
+
+      // countdown Timer
+      const countdownOverlay = document.getElementById("countdownOverlay");
+      const countdownTimer = document.getElementById("countdownTimer");
+
+      // target date: April 25, 2025 at 00:00:00
+      const targetDate = new Date("2025-04-25T00:00:00");
+
+      function updateCountdown() {
+        const now = new Date();
+        const timeDifference = targetDate - now;
+
+        // check if the target date has passed
+        if (timeDifference <= 0) {
+          countdownOverlay.classList.add("hidden");
+
+          // enable interactions when countdown ends
+          enableInteractions();
+          return;
+        }
+
+        // calculate hours, minutes and seconds
+        const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+        const minutes = Math.floor(
+          (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+        // format with leading zeros
+        const formattedHours = String(hours).padStart(2, "0");
+        const formattedMinutes = String(minutes).padStart(2, "0");
+        const formattedSeconds = String(seconds).padStart(2, "0");
+
+        // update the countdown display
+        countdownTimer.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+      }
+
+      // function to enable interactions after countdown ends
+      function enableInteractions() {
+        interactionsEnabled = true;
+        messageBox.classList.add("active");
+        cake.classList.add("active");
+
+        // create a burst of confetti to celebrate the moment
+        createConfetti();
+        createConfetti();
+        createConfetti();
+      }
+
+      // initial call
+      updateCountdown();
+
+      // update the countdown every second
+      const countdownInterval = setInterval(() => {
+        updateCountdown();
+
+        // check if to stop the interval
+        if (new Date() >= targetDate) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+
+      // for testing purposes - uncomment this to bypass the countdown
+      // setTimeout(enableInteractions, 5000); // enable after 5 seconds
+
+      // test module to simulate uncovering the timer layer
+      // uncomment this block to test the uncovering of the timer layer
+
+      //   setTimeout(() => {
+      //     // simulate the countdown reaching zero
+      //     countdownOverlay.classList.add("hidden");
+
+      //     // enable interactions
+      //     enableInteractions();
+
+      //     console.log("Test: Timer layer uncovered and interactions enabled.");
+      //   }, 5000); // simulate after 5 seconds
+    </script>
+  </body>
+</html>
